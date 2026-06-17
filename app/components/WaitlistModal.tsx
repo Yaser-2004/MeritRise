@@ -199,11 +199,13 @@ export default function WaitlistModal({
                                             </>
                                         ) : (
                                             <>
-                                                <option value="cs">Computer Science</option>
-                                                <option value="data-science">Data Science</option>
-                                                <option value="management">Management</option>
-                                                <option value="design">Design</option>
-                                                <option value="other">Other</option>
+                                                <option value="bba">BBA</option>
+                                                <option value="bca">BCA</option>
+                                                <option value="bsc">BSc/BS</option>
+                                                <option value="mtech">MTech</option>
+                                                <option value="certification">Certification</option>
+                                                <option value="pg-diploma">PG Diploma</option>
+                                                <option value="other">Others</option>
                                             </>
                                         )}
                                     </select>
