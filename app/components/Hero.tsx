@@ -154,14 +154,43 @@ export default function Hero() {
 
                 {/* CTA */}
                 <div className="mt-14 flex flex-col sm:flex-row md:gap-8 gap-4 justify-center">
-                    <Button className="cursor-pointer h-16 bg-[#232AFF] hover:bg-[#1f25e0] text-white text-[16px] px-6 rounded-lg" onClick={() => document.getElementById("programs")?.scrollIntoView({ behavior: "smooth" })}>
-
+                    <Button
+                        className="
+                            group cursor-pointer h-16
+                            bg-[#232AFF] text-white text-[16px]
+                            px-6 rounded-lg
+                            transition-all duration-300 ease-out
+                            hover:-translate-y-1
+                            hover:bg-[#1f25e0]
+                            hover:shadow-[0_12px_32px_rgba(35,42,255,0.25)]
+                            active:translate-y-0
+                        "
+                        onClick={() =>
+                            document
+                                .getElementById('programs')
+                                ?.scrollIntoView({ behavior: 'smooth' })
+                        }
+                    >
                         Explore Upcoming Programs
                     </Button>
                     <Button
-                        onClick={() => document.getElementById("partner-with-us")?.scrollIntoView({ behavior: "smooth" })}
+                        onClick={() =>
+                            document
+                                .getElementById('partner-with-us')
+                                ?.scrollIntoView({ behavior: 'smooth' })
+                        }
                         variant="outline"
-                        className="cursor-pointer h-16 border-black/50 text-black hover:bg-black hover:text-white text-[16px] px-6 rounded-lg"
+                        className="
+                            cursor-pointer h-16
+                            border-black/50 text-black
+                            text-[16px] px-6 rounded-lg
+                            transition-all duration-300 ease-out
+                            hover:-translate-y-1
+                            hover:bg-black
+                            hover:text-white
+                            hover:shadow-[0_12px_24px_rgba(0,0,0,0.12)]
+                            active:translate-y-0
+                        "
                     >
                         Partner With Us (Institutions)
                     </Button>
