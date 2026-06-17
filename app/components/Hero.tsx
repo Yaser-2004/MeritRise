@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import { instrumentSerif } from "../layout";
 import img from "../assets/Group43.png";
 import Image from "next/image";
+import { Zap } from "lucide-react";
 
 function GradientGlow() {
     return (
@@ -199,6 +200,12 @@ export default function Hero() {
 
             {/* STATS */}
             <HeroStats />
+
+            {/* Make Powered By LearningShala capsule */}
+            <div className="mt-8">
+                <p className={`border border-black rounded-full px-10 py-3 text-sm md:text-lg text-black/80 mt-2 md:mt-6 text-center leading-tight ${instrumentSerif.className}`}>
+                    {/* stretch the zap vertically*/}<span><Zap className="inline-block mr-3 w-[10px] h-[20px] scale-y-200 pb-0.5" /></span>Powered By LearningShala</p>
+            </div>
         </section>
     );
 }
