@@ -48,7 +48,7 @@ export default function Footer() {
 
             {/* Main grid */}
             <div className="max-w-8xl mx-auto pt-24 pb-16 px-6 md:px-12 lg:px-16">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 md:mb-20 mb-10">
 
                     {/* Col 1: Brand */}
                     <div className="max-w-xs md:-mt-4">
