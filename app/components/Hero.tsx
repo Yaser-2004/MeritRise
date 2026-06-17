@@ -202,7 +202,7 @@ export default function Hero() {
             <HeroStats />
 
             {/* Make Powered By LearningShala capsule */}
-            <div className="mt-8">
+            <div className="mt-16">
                 <a href="https://learningshala.in" target="_blank" className={`border border-black rounded-full px-10 py-3 text-sm md:text-lg text-black/80 mt-2 md:mt-6 text-center leading-tight ${instrumentSerif.className}`}>
                     <span><Zap className="inline-block mr-3 w-[10px] h-[20px] scale-y-200 pb-0.5" /></span>Powered By LearningShala</a>
             </div>
