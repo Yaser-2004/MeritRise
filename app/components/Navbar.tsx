@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from "react";
@@ -104,18 +103,16 @@ export interface SubMenu {
 interface ListItemProps extends React.ComponentPropsWithoutRef<"li"> {
     customClassName?: string;
     href: string;
-    title: string; // Add title to the interface
-    description?: string; // Make description optional as per its usage below
+    title: string;
+    description?: string;
     icon?: React.ReactNode;
-    children?: React.ReactNode; // Make children optional if it's not always present
+    children?: React.ReactNode;
 }
 
 const mainMenu: MenuItem[] = [
     {
         title: "Products",
-
         url: "/products",
-        // Base URL for products
         subMenu: [
             {
                 title: "All Products",
@@ -201,7 +198,6 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
     React.useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 50) {
-                // Adjust this value as needed
                 setIsScrolled(true);
             } else {
                 setIsScrolled(false);
@@ -210,7 +206,6 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
 
         window.addEventListener("scroll", handleScroll);
 
-        // Cleanup function to remove the event listener when the component unmounts
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
@@ -243,7 +238,6 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
             : "py-3"
         }`;
 
-    //Functional component to render each menu item
     const RenderMainMenuItem = ({ menuItem }: { menuItem: MenuItem }) => {
         if (menuItem.subMenu && menuItem.subMenu.length > 0) {
             return (
@@ -262,7 +256,7 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                                     description={subMenuItem.description}
                                     icon={subMenuItem.icon}
                                     href={subMenuItem.url || ""}
-                                    customClassName={subMenuItem.className} // Passing personalized class
+                                    customClassName={subMenuItem.className}
                                 />
                             ))}
                         </ul>
@@ -279,7 +273,7 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
             </NavigationMenuLink>
         );
     };
-    //Functional component to render the logo
+
     const RenderNameAndLogo = ({
         defaultLogo,
     }: {
@@ -288,13 +282,11 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
         return (
             <Link href={"/"}>
                 <div className="pb-1 flex justify-start md:justify-center md:items-center gap-2 md:mb-[2px]">
-                    <Image src={logoBlack} alt="Logo" className="md:h-[40px] h-[25px] object-contain w-fit" /> {/* maintain aspect ratio */}
+                    <Image src={logoBlack} alt="Logo" className="md:h-[40px] h-[25px] object-contain w-fit" />
                 </div>
             </Link>
         );
     };
-    //
-    //return the main jsx of the component
 
     return (
         <nav
@@ -305,12 +297,9 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                 } ${className}`}
         >
             <div className="border-b flex justify-between px-4 md:px-[80px] items-center pb-6 w-full">
-                {/* Logo  */}
                 <RenderNameAndLogo defaultLogo={defaultLogo} />
-                {/* Navigation menu */}
                 <NavigationMenu viewport={false} className="max-lg:hidden mt-2 ">
                     <NavigationMenuList>
-                        {/* home */}
                         {defaultNavigationMenu.map((mainMenuItem) => (
                             <RenderMainMenuItem
                                 key={mainMenuItem.title}
@@ -319,7 +308,6 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                         ))}
                     </NavigationMenuList>
                 </NavigationMenu>
-                {/* Mobile Menu */}
 
                 <div>
                     <RenderMobileMenu defaultLogo={defaultLogo} />
@@ -329,16 +317,6 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                                 {leftAddon}
                             </div>
                         )}
-                        {/* Login Button */}
-                        {/* <RenderAuthButton
-                        className={loginClassName}
-                        isVisible={isLoginVisbile}
-                        onClick={onLoginClicked}
-                        text={loginText}
-                        urlLink={urlLoginUrl}
-                        variant={loginVariant}
-                    /> */}
-
                         <RenderAuthButton
                             className={registerClassName}
                             isVisible={isRegisterVisible}
@@ -373,32 +351,55 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                             <Image
                                 src={logoBlack}
                                 alt="Logo"
-                                className="h-8 w-auto"
+                                className="h-6 w-auto"
                             />
                         </SheetTitle>
                     </SheetHeader>
 
                     <div className="mt-20 mx-10">
-                        <Accordion type="single" collapsible className="p-3">
+                        {/*
+                            The base <Accordion> component (components/ui/accordion.tsx) hardcodes
+                            "rounded-2xl overflow-hidden" — that's what made the whole menu look like
+                            a floating card with rounded corners in the screenshot.
+
+                            We override BOTH of those here, directly at the usage site:
+                              - rounded-none  → kills the 2xl rounding
+                              - !overflow-visible → kills the clipping (the ! forces it past the
+                                base component's own class, since Tailwind's `cn()` merge order
+                                otherwise lets the component's own "overflow-hidden" win)
+                        */}
+                        <Accordion
+                            type="single"
+                            collapsible
+                            className="w-full rounded-none !overflow-visible"
+                        >
                             {defaultNavigationMenu.map((mainMenuItem) => {
-                                // If menu item has submenu, render as accordion item
                                 if (mainMenuItem.subMenu && mainMenuItem.subMenu.length > 0) {
                                     return (
                                         <AccordionItem
                                             key={mainMenuItem.title}
                                             value={mainMenuItem.title}
-                                            className="border-none"
+                                            /*
+                                                Base AccordionItem ships with:
+                                                  "not-last:border-b data-open:bg-muted/50"
+                                                The border-b IS there, but with no explicit color it
+                                                inherits from the theme's --border CSS variable, which
+                                                can be very faint/invisible depending on your theme.
+                                                We make it explicit and visible here, AND we remove the
+                                                "open state" background tint since we want a flat list.
+                                            */
+                                            className="border-b border-gray-200 data-open:bg-transparent"
                                         >
-                                            <AccordionTrigger className="text-left font-medium">
+                                            <AccordionTrigger className="text-left text-lg font-medium px-0 py-6 w-full hover:no-underline">
                                                 {mainMenuItem.title}
                                             </AccordionTrigger>
-                                            <AccordionContent className="pb-4">
+                                            <AccordionContent className="pb-4 px-0">
                                                 <div className="space-y-2">
                                                     {mainMenuItem.subMenu.map((subMenuItem) => (
                                                         <Link
                                                             key={subMenuItem.title}
                                                             href={subMenuItem.url || ""}
-                                                            className=" p-2 flex items-center gap-4 rounded-md hover:bg-accent text-sm"
+                                                            className="p-2 flex items-center gap-4 rounded-md hover:bg-accent text-base"
                                                         >
                                                             <div className="text-sm">
                                                                 {React.isValidElement(subMenuItem.icon)
@@ -429,12 +430,13 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                                     );
                                 }
 
-                                // For simple menu items without submenu, render as regular link
+                                // Simple menu items without submenu also get the same bottom border
+                                // so the whole list looks visually consistent, divider after divider.
                                 return (
-                                    <div key={mainMenuItem.title} className="">
+                                    <div key={mainMenuItem.title} className="w-full border-b border-gray-200">
                                         <Link
                                             href={mainMenuItem.url}
-                                            className="block py-4 font-medium hover:text-accent-foreground"
+                                            className="block py-4 w-full text-lg font-medium hover:text-accent-foreground"
                                         >
                                             {mainMenuItem.title}
                                         </Link>
@@ -443,9 +445,9 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                             })}
                         </Accordion>
 
-                        <div className="mt-6">
+                        <div className="mt-20 w-full">
                             <RenderAuthButton
-                                className={registerClassName}
+                                className={`${registerClassName} w-full`}
                                 isVisible={isRegisterVisible}
                                 onClick={() => setOpenType("student")}
                                 text={registerText}
@@ -454,29 +456,6 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                                 isInSheet={true}
                             />
                         </div>
-
-                        {/* Login Button */}
-                        {/* <div className="mt-10">
-                            <RenderAuthButton
-                                className={loginClassName}
-                                isVisible={isLoginVisbile}
-                                onClick={onLoginClicked}
-                                text={loginText}
-                                urlLink={urlLoginUrl}
-                                variant={loginVariant}
-                                isInSheet={true}
-                            />
-                            
-                            <RenderAuthButton
-                                className={registerClassName}
-                                isVisible={isRegisterVisible}
-                                onClick={onRegisterClicked}
-                                text={registerText}
-                                urlLink={urlRegisterUrl}
-                                variant={registerVariant}
-                                isInSheet={true}
-                            />
-                        </div> */}
                     </div>
                 </SheetContent>
             </Sheet>
@@ -541,11 +520,8 @@ function ListItem({
     href,
     ...props
 }: ListItemProps) {
-    console.log(icon);
-
     return (
         <li {...props}>
-            {/* The entire content is clickable, so Link should wrap the main section */}
             <NavigationMenuLink asChild>
                 <Link
                     href={href}
@@ -574,5 +550,3 @@ function ListItem({
         </li>
     );
 }
-
-
