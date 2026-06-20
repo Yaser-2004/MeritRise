@@ -14,19 +14,34 @@ interface WaitlistModalProps {
     userType: UserType;
 }
 
+// Form shape is a superset of both flows. We only read the fields
+// relevant to whichever userType is active.
+interface FormState {
+    fullName: string; // used as Institution Name when userType === "institution"
+    email: string;
+    phone: string;
+    program: string; // used as "Type of Institution" when userType === "institution"
+    designation: string; // institution-only field
+}
+
+const EMPTY_FORM: FormState = {
+    fullName: "",
+    email: "",
+    phone: "",
+    program: "",
+    designation: "",
+};
+
 export default function WaitlistModal({
     isOpen,
     onClose,
     userType,
 }: WaitlistModalProps) {
-    const [formData, setFormData] = useState({
-        fullName: "",
-        email: "",
-        phone: "",
-        program: "",
-    });
+    const [formData, setFormData] = useState<FormState>(EMPTY_FORM);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showThankYou, setShowThankYou] = useState(false);
+
+    const isInstitution = userType === "institution";
 
     // Whole flow is invisible only when parent closed it AND we're not mid-thank-you
     if (!isOpen && !showThankYou) return null;
@@ -42,29 +57,31 @@ export default function WaitlistModal({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // setIsSubmitting(true);
-
-        // // ── Hook up your API call here ──
-        // // await fetch("/api/waitlist", {
-        // //     method: "POST",
-        // //     body: JSON.stringify({ ...formData, userType }),
-        // // });
-
-        // console.log("Submission:", { ...formData, userType });
-
-        // setIsSubmitting(false);
-        // setShowThankYou(true); // switch from form → thank-you, WITHOUT calling onClose
-        // // Do NOT call onClose() here — it unmounts this whole component in the parent,
-        // // which means showThankYou=true never gets a chance to render anything.
-
-        e.preventDefault();
         setIsSubmitting(true);
 
         try {
-            await axios.post("/api/waitlist", {
-                ...formData,
-                userType,
-            });
+            if (isInstitution) {
+                // Institution flow -> /api/partner-with-us
+                // Note: this modal's "Full Name" field doubles as Institution Name,
+                // and "Type of Institution" doubles as the `program` field, for
+                // institutions. Designation is its own dedicated field below.
+                await axios.post("/api/partner-with-us", {
+                    institution: formData.fullName,
+                    contact: formData.fullName, // no separate contact-person field in this modal;
+                    // if you want a distinct contact person name, add a field for it.
+                    email: formData.email,
+                    phone: formData.phone,
+                    designation: formData.designation,
+                });
+            } else {
+                // Student flow -> /api/join-waitlist
+                await axios.post("/api/join-waitlist", {
+                    fullName: formData.fullName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    program: formData.program,
+                });
+            }
 
             setShowThankYou(true);
         } catch (err) {
@@ -72,11 +89,8 @@ export default function WaitlistModal({
             alert("Something went wrong. Please try again.");
         } finally {
             setIsSubmitting(false);
-            setShowThankYou(true);
         }
     };
-
-    const isInstitution = userType === "institution";
 
     return (
         <>
@@ -210,6 +224,24 @@ export default function WaitlistModal({
                                         )}
                                     </select>
                                 </div>
+
+                                {/* Designation — institution flow only, required by the partner-with-us API */}
+                                {isInstitution && (
+                                    <div className="sm:col-span-2">
+                                        <label className="block text-sm text-white/80 mb-2">
+                                            Designation
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="designation"
+                                            value={formData.designation}
+                                            onChange={handleChange}
+                                            placeholder="Enter Your Designation"
+                                            required
+                                            className="w-full rounded-full bg-white text-gray-800 placeholder:text-gray-400 px-5 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-400 transition-shadow"
+                                        />
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex justify-center pt-2">
@@ -235,7 +267,8 @@ export default function WaitlistModal({
                 isOpen={showThankYou}
                 onClose={() => {
                     setShowThankYou(false); // reset local state
-                    onClose();              // tell parent the whole flow is done
+                    setFormData(EMPTY_FORM); // clear form for next open
+                    onClose(); // tell parent the whole flow is done
                 }}
                 userType={userType}
             />

@@ -38,8 +38,8 @@ function Input({
 
 /* ── Section ──────────────────────────────────────────────────────────── */
 export default function PartnerWithUsSection() {
-    //Show the thank you modal after submit
     const [showThankYou, setShowThankYou] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [form, setForm] = useState({
         institution: "",
         contact: "",
@@ -54,21 +54,23 @@ export default function PartnerWithUsSection() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // TODO: wire up to your API
-        if (!form.institution || !form.contact || !form.email || !form.phone || !form.designation) {
+        if (
+            !form.institution ||
+            !form.contact ||
+            !form.email ||
+            !form.phone ||
+            !form.designation
+        ) {
             alert("Please fill all the fields");
             return;
         }
-        //remove the fields
+
+        setIsSubmitting(true);
         try {
-            await axios.post("/api/waitlist", {
-                ...form,
-                userType: "institution",
-            });
-        } catch (err) {
-            console.error(err);
-            alert("Something went wrong. Please try again.");
-        } finally {
+            // Calls our own Next.js API route, which proxies to the external
+            // partner-with-us endpoint server-side (keeps any API key off the client).
+            await axios.post("/api/partner-with-us", form);
+            setShowThankYou(true);
             setForm({
                 institution: "",
                 contact: "",
@@ -76,7 +78,11 @@ export default function PartnerWithUsSection() {
                 phone: "",
                 designation: "",
             });
-            setShowThankYou(true);
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -98,7 +104,6 @@ export default function PartnerWithUsSection() {
                     style={{ background: "#0f2275" }}
                 >
                     <div className="absolute pointer-events-none z-0 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,_#237BFF_0%,_transparent_70%)] blur-[100px] md:blur-[160px]" />
-
 
                     {/* Left: copy */}
                     <div
@@ -124,7 +129,8 @@ export default function PartnerWithUsSection() {
                     </div>
 
                     {/* Right: form */}
-                    <div
+                    <form
+                        onSubmit={handleSubmit}
                         className="flex-1 md:px-14 px-8 md:py-14 py-8 flex flex-col gap-5"
                         style={{ background: "#0f2275" }}
                     >
@@ -182,13 +188,14 @@ export default function PartnerWithUsSection() {
 
                         {/* Submit */}
                         <button
-                            onClick={handleSubmit}
-                            className="cursor-pointer hover:scale-105 w-full rounded-lg py-3.5 text-[15px] font-semibold text-white tracking-tight transition-all duration-200 hover:brightness-110 active:scale-[0.99] mt-6 z-10"
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="cursor-pointer hover:scale-105 w-full rounded-lg py-3.5 text-[15px] font-semibold text-white tracking-tight transition-all duration-200 hover:brightness-110 active:scale-[0.99] mt-6 z-10 disabled:opacity-60 disabled:hover:scale-100"
                             style={{ background: "#1a56ff" }}
                         >
-                            Submit
+                            {isSubmitting ? "Submitting..." : "Submit"}
                         </button>
-                    </div>
+                    </form>
 
                 </div>
             </div>
