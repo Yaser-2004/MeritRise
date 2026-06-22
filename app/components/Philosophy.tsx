@@ -1,77 +1,9 @@
 "use client";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { instrumentSerif } from "../layout";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function Philosophy() {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const card1Ref = useRef<HTMLDivElement>(null);
-    const card2Ref = useRef<HTMLDivElement>(null);
-    const card3Ref = useRef<HTMLDivElement>(null);
-    const mask1Ref = useRef<HTMLDivElement>(null);
-    const mask2Ref = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            const ctx = gsap.context(() => {
-                gsap.set(card1Ref.current, { opacity: 0, y: 30 });
-                gsap.set(card2Ref.current, { opacity: 0, y: 30 });
-                gsap.set(card3Ref.current, { opacity: 0, y: 30 });
-
-                const setMaskVar = (el: HTMLDivElement | null, val: number) => {
-                    if (el) el.style.setProperty("--p", `${val}%`);
-                };
-                setMaskVar(mask1Ref.current, 100);
-                setMaskVar(mask2Ref.current, 100);
-
-                const mask1Proxy = { p: 100 };
-                const mask2Proxy = { p: 100 };
-
-                // ── No pin, no scrub. Just a normal autoplay-on-enter timeline. ──
-                // This means: NO extra scroll height is reserved, NO spacer div
-                // is injected, and there is nothing to "jump" because the layout
-                // never changes — only opacity/transform/CSS vars animate.
-                const tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: sectionRef.current,
-                        start: "top 75%",          // fires when section is 75% down the viewport
-                        toggleActions: "play none none none", // play once, never reverse/repeat
-                    },
-                });
-
-                // Step 1 — Card 1
-                tl.to(card1Ref.current, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" });
-
-                // Step 2 — Arrow 1 reveals
-                tl.to(mask1Proxy, {
-                    p: 0, duration: 0.9, ease: "power1.inOut",
-                    onUpdate() { setMaskVar(mask1Ref.current, mask1Proxy.p); },
-                }, "+=0.15");
-
-                // Step 3 — Card 2
-                tl.to(card2Ref.current, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, ">");
-
-                // Step 4 — Arrow 2 reveals
-                tl.to(mask2Proxy, {
-                    p: 0, duration: 0.9, ease: "power1.inOut",
-                    onUpdate() { setMaskVar(mask2Ref.current, mask2Proxy.p); },
-                }, "+=0.15");
-
-                // Step 5 — Card 3
-                tl.to(card3Ref.current, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, ">");
-            }, sectionRef);
-
-            return () => ctx.revert();
-        }, 100); // small delay lets layout settle before ScrollTrigger measures positions
-
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
-        <section id="philosophy" ref={sectionRef} className="relative h-auto py-16 px-6 text-center flex flex-col justify-center overflow-hidden">
+        <section id="philosophy" className="relative h-auto py-16 px-6 text-center flex flex-col justify-center overflow-hidden">
             {/* Background blobs */}
             <div className="absolute right-40 top-10 -z-10 w-[200px] h-[200px] rounded-full bg-[radial-gradient(circle,_#89FFDC_0%,_transparent_70%)] blur-[70px] pointer-events-none" />
             <div className="absolute left-40 bottom-20 -z-10 w-[300px] h-[300px] rounded-full bg-[radial-gradient(circle,_#9C93FF_0%,_transparent_70%)] blur-[120px] pointer-events-none" />
@@ -90,7 +22,7 @@ export default function Philosophy() {
 
                 {/* Arrow 1 */}
                 <div
-                    className="absolute pointer-events-none"
+                    className="absolute -z-10 pointer-events-none"
                     style={{ left: "16.6%", top: "-90px", width: "39%", height: "120px" }}
                 >
                     <svg width="333" height="109" viewBox="0 0 333 109" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -101,7 +33,6 @@ export default function Philosophy() {
                         <path d="M321.488 97L304.488 92.5L318.937 108.579L332.988 97.7393L328.488 79.5L321.488 97Z" fill="white" />
                     </svg>
                     <div
-                        ref={mask1Ref}
                         className="absolute inset-0"
                         style={{
                             background:
@@ -112,7 +43,7 @@ export default function Philosophy() {
 
                 {/* Arrow 2 */}
                 <div
-                    className="absolute pointer-events-none"
+                    className="absolute -z-10 pointer-events-none"
                     style={{ left: "50%", bottom: "-105px", width: "33.3%", height: "121px" }}
                 >
                     <svg width="356" height="111" viewBox="0 0 356 111" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -122,7 +53,6 @@ export default function Philosophy() {
                         <path d="M346.988 13.1715L332.489 17.1715L335.669 0.0382917L355.662 5.53105L346.988 24.1715L346.988 13.1715Z" fill="white" />
                     </svg>
                     <div
-                        ref={mask2Ref}
                         className="absolute inset-0"
                         style={{
                             background: "conic-gradient(from 90deg at 50% 0%, white 0% var(--p), transparent var(--p) 100%)",
@@ -132,26 +62,20 @@ export default function Philosophy() {
 
                 {/* Cards */}
                 <div className="flex flex-row gap-10 justify-center">
-                    <div ref={card1Ref} className="rounded-[10px] p-10 pt-16 text-left flex-1 h-[350px]"
-                        style={{ background: "radial-gradient(circle at bottom right, #b8dbffff 0%, #D9EEFF 100%)" }}
-                        onMouseEnter={() => gsap.to(card1Ref.current, { scale: 1.05, duration: 0.3 })}
-                        onMouseLeave={() => gsap.to(card1Ref.current, { scale: 1, duration: 0.3 })}>
+                    <div className="hover:scale-103 transition-all duration-300 rounded-[10px] p-10 pt-16 text-left flex-1 h-[350px]"
+                        style={{ background: "radial-gradient(circle at bottom right, #b8dbffff 0%, #D9EEFF 100%)" }}>
                         <h3 className={`${instrumentSerif.className} text-5xl font-medium text-[#0C447C] mb-6`}>Talent</h3>
                         <p className="text-xl text-gray-600 leading-relaxed">Talent is distributed equally in India. Opportunity is not!</p>
                     </div>
 
-                    <div ref={card2Ref} className="rounded-[10px] p-10 pt-16 text-left flex-1 h-[350px]"
-                        style={{ background: "radial-gradient(circle at top right, #d6d3ffff 0%, #DDDAFF 100%)" }}
-                        onMouseEnter={() => gsap.to(card2Ref.current, { scale: 1.05, duration: 0.3 })}
-                        onMouseLeave={() => gsap.to(card2Ref.current, { scale: 1, duration: 0.3 })}>
+                    <div className="hover:scale-103 transition-all duration-300 rounded-[10px] p-10 pt-16 text-left flex-1 h-[350px]"
+                        style={{ background: "radial-gradient(circle at top right, #d6d3ffff 0%, #DDDAFF 100%)" }}>
                         <h3 className={`${instrumentSerif.className} text-5xl font-medium text-[#291CBB] mb-6`}>Access</h3>
                         <p className="text-xl text-gray-600 leading-relaxed">Geography and institutional access restrict opportunity.</p>
                     </div>
 
-                    <div ref={card3Ref} className="rounded-[10px] p-10 pt-16 text-left flex-1 h-[350px]"
-                        style={{ background: "radial-gradient(circle at bottom left, #89ffdaff 0%, #CDFFEF 100%)" }}
-                        onMouseEnter={() => gsap.to(card3Ref.current, { scale: 1.05, duration: 0.3 })}
-                        onMouseLeave={() => gsap.to(card3Ref.current, { scale: 1, duration: 0.3 })}>
+                    <div className="hover:scale-103 transition-all duration-300 rounded-[10px] p-10 pt-16 text-left flex-1 h-[350px]"
+                        style={{ background: "radial-gradient(circle at bottom left, #89ffdaff 0%, #CDFFEF 100%)" }}>
                         <h3 className={`${instrumentSerif.className} text-5xl font-medium text-[#085041] mb-6`}>Meritrise</h3>
                         <p className="text-xl text-gray-600 leading-relaxed">We are closing this infrastructure gap by removing geographical and economic barriers to Tier-1 education.</p>
                     </div>

@@ -1,6 +1,6 @@
 "use client";
 import { instrumentSerif } from "../layout";
-import logoWhite from "../assets/logoWhite.png";
+import logoWhite from "../assets/logoWhite.webp";
 import Image from "next/image";
 
 /* Data*/

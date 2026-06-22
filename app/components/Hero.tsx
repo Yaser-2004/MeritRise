@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState, useRef } from "react";
 import { instrumentSerif } from "../layout";
-import img from "../assets/Group43.png";
+import img from "../assets/Group43w.webp";
 import Image from "next/image";
 import { Zap } from "lucide-react";
 
@@ -133,7 +133,12 @@ function HeroStats() {
 export default function Hero() {
     return (
         <section className="pb-20 relative flex min-h-screen flex-col items-center justify-center px-6 text-center ">
-            <Image src={img} alt="" className="w-full h-[350px] top-1/2 -translate-y-[350px] object-cover absolute -z-20" />
+            <Image
+                priority
+                src={img}
+                alt=""
+                className="w-full h-[350px] top-1/2 -translate-y-[350px] object-cover absolute -z-20"
+            />
             <GradientGlow />
 
             {/* HERO CONTENT */}

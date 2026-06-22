@@ -3,13 +3,8 @@
 import { Card } from "@/components/ui/card";
 import { instrumentSerif, stixTwoText } from "../layout";
 import { Gauge, Bot, ShieldCheck, Radar, UserCheck, Rocket, LucideIcon } from "lucide-react";
-import img from "../assets/Group38.png";
+import img from "../assets/Group38w.webp";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const leftFeatures = [
     {
@@ -84,61 +79,13 @@ function FeatureCard({
 }
 
 export default function TechStackSection() {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const leftCardRef = useRef<HTMLDivElement>(null);
-    const rightCardRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        // Small timeout lets the DOM fully paint before GSAP measures positions.
-        // This is the most common reason ScrollTrigger fires instantly or never fires —
-        // it calculates offsets before layout is complete.
-        const timer = setTimeout(() => {
-            const ctx = gsap.context(() => {
-                // Hide both cards before animation
-                gsap.set(leftCardRef.current, { opacity: 0, y: 60 });
-                gsap.set(rightCardRef.current, { opacity: 0, y: 60 });
-
-                // Left card — triggers when top of section hits 75% down the viewport
-                gsap.to(leftCardRef.current, {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.9,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: leftCardRef.current, // trigger on the card itself, not the section
-                        start: "top 85%",             // fires when card top is 85% down viewport
-                        toggleActions: "play none none none", // play once, don't reverse
-                    },
-                });
-
-                // Right card — slight delay via stagger feeling (start a little lower)
-                gsap.to(rightCardRef.current, {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.9,
-                    delay: 0.15,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: rightCardRef.current,
-                        start: "top 85%",
-                        toggleActions: "play none none none",
-                    },
-                });
-            }, sectionRef);
-
-            return () => ctx.revert();
-        }, 100);
-
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
         <section
             id="ai"
-            ref={sectionRef}
             className="relative z-10 w-full bg-white py-24 px-6 overflow-hidden"
         >
             <Image
+                priority
                 src={img}
                 alt="Group 38"
                 style={{ transform: "scaleX(-1)" }}
@@ -159,13 +106,8 @@ export default function TechStackSection() {
             <div className="mt-16 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20">
 
                 {/* Left Card */}
-                <div ref={leftCardRef} onMouseEnter={() =>
-                    gsap.to(leftCardRef.current, { scale: 1.05, duration: 0.3 })
-                }
-                    onMouseLeave={() =>
-                        gsap.to(leftCardRef.current, { scale: 1, duration: 0.3 })
-                    }>
-                    <Card className="p-10 rounded-2xl bg-[#daeffeff]">
+                <div>
+                    <Card className="hover:scale-103 transition-all duration-300 p-10 rounded-2xl bg-[#daeffeff]">
                         <h3 className="text-3xl w-full text-center font-medium tracking-tight bg-gradient-to-r from-black to-[#666666]/90 text-transparent bg-clip-text">
                             AI-Powered LMS
                         </h3>
@@ -184,13 +126,8 @@ export default function TechStackSection() {
                 </div>
 
                 {/* Right Card */}
-                <div ref={rightCardRef} onMouseEnter={() =>
-                    gsap.to(rightCardRef.current, { scale: 1.02, duration: 0.3 })
-                }
-                    onMouseLeave={() =>
-                        gsap.to(rightCardRef.current, { scale: 1, duration: 0.3 })
-                    }>
-                    <Card className="p-10 rounded-2xl bg-[#D9FFF2]">
+                <div>
+                    <Card className="hover:scale-103 transition-all duration-300 p-10 rounded-2xl bg-[#D9FFF2]">
                         <h3 className="text-3xl w-full text-center font-medium tracking-tight bg-gradient-to-r from-black to-[#666666]/90 text-transparent bg-clip-text">
                             AI Career Readiness
                         </h3>

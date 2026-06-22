@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import logo from "../assets/MeritRise_without_Tagline_Logo-removebg-preview.png";
-import logoBlack from "../assets/logoBlack.png"
+import logoBlack from "../assets/logoBlack.webp"
 
 import {
     NavigationMenu,
