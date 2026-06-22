@@ -338,7 +338,7 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
 
     function RenderMobileMenu({ defaultLogo }: { defaultLogo: React.ReactNode }) {
         return (
-            <Sheet>
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetTrigger asChild>
                     <Button variant={"outline"} size="icon" className="hidden max-lg:flex relative z-[100] cursor-pointer touch-manipulation">
                         <MenuIcon className="h-5 w-5" />
@@ -398,6 +398,7 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                                                         <Link
                                                             key={subMenuItem.title}
                                                             href={subMenuItem.url || ""}
+                                                            onClick={() => setMobileMenuOpen(false)}
                                                             className="p-2 flex items-center gap-4 rounded-md hover:bg-accent text-base"
                                                         >
                                                             <div className="text-sm">
@@ -435,6 +436,7 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                                     <div key={mainMenuItem.title} className="w-full border-b border-gray-200">
                                         <Link
                                             href={mainMenuItem.url}
+                                            onClick={() => setMobileMenuOpen(false)}
                                             className="block py-4 w-full text-lg font-medium hover:text-accent-foreground"
                                         >
                                             {mainMenuItem.title}
@@ -448,7 +450,10 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
                             <RenderAuthButton
                                 className={`${registerClassName} w-full`}
                                 isVisible={isRegisterVisible}
-                                onClick={() => setOpenType("student")}
+                                onClick={() => {
+                                    setMobileMenuOpen(false);
+                                    setOpenType("student");
+                                }}
                                 text={registerText}
                                 urlLink={urlRegisterUrl}
                                 variant={registerVariant}
