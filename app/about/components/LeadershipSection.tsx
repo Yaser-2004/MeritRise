@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, ReactNode } from "react";
 import { instrumentSerif } from "../../layout";
-import leaders from "../../assets/leaders.png";
+import leaders from "../../assets/leadersw.webp";
 
 import type { StaticImageData } from "next/image";
 
