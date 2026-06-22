@@ -231,9 +231,9 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
     } = register;
 
     const navBarSticklyTailwindCss = `
-        mb-12 py-5 flex justify-between items-center transition-all duration-300
+        sticky border-b top-0 mb-12 py-5 flex justify-between items-center transition-all duration-300 w-full bg-background/90 backdrop-blur-md
         ${isScrolled
-            ? "py-2"
+            ? "py-2 shadow-sm"
             : "py-3"
         }`;
 
@@ -290,12 +290,12 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
     return (
         <nav
             {...props}
-            className={`relative z-50 ${isSticky
+            className={`z-50 ${isSticky
                 ? navBarSticklyTailwindCss
-                : "flex justify-between items-center p-6 px-20"
+                : "relative flex justify-between items-center p-6 px-20"
                 } ${className}`}
         >
-            <div className="border-b flex justify-between px-4 md:px-[80px] items-center pb-6 w-full">
+            <div className="flex justify-between px-4 md:px-[80px] items-center w-full">
                 <RenderNameAndLogo defaultLogo={defaultLogo} />
                 <NavigationMenu viewport={false} className="max-lg:hidden mt-2 ">
                     <NavigationMenuList>
