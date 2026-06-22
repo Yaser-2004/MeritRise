@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import logo from "../assets/MeritRise_without_Tagline_Logo-removebg-preview.png";
 import logoBlack from "../assets/logoBlack.webp"
 
 import {
@@ -282,7 +281,7 @@ export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
         return (
             <Link href={"/"}>
                 <div className="pb-1 flex justify-start md:justify-center md:items-center gap-2 md:mb-[2px]">
-                    <Image src={logoBlack} alt="Logo" className="md:h-[40px] h-[25px] object-contain w-fit" />
+                    <Image src={logoBlack} alt="Logo" className="md:h-[40px] h-[25px] object-contain w-fit" style={{ color: "black" }} />
                 </div>
             </Link>
         );
