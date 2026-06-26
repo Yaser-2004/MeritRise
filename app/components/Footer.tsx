@@ -1,14 +1,13 @@
-"use client";
-import { instrumentSerif } from "../layout";
+import { instrumentSerif } from "@/app/fonts";
 import logoWhite from "../assets/logoWhite.webp";
 import Image from "next/image";
 
 /* Data*/
 const NAV_LINKS = [
-    { label: "Our Philosophy", href: "#philosophy" },
-    { label: "Upcoming Programs", href: "#programs" },
-    { label: "AI Architecture", href: "#ai" },
-    { label: "Institutional Partners", href: "#partners" },
+    { label: "Our Ecosystem", href: "#our-ecosystem" },
+    { label: "How it works", href: "#how-it-works" },
+    { label: "Upcoming Programs", href: "#upcoming-programs" },
+    { label: "AI Architecture", href: "#ai-architecture" },
 ];
 
 /* Sub-components */
@@ -44,10 +43,10 @@ function Logo() {
 /* Footer */
 export default function Footer() {
     return (
-        <footer style={{ background: "#000d43ff" }}>
+        <footer style={{ background: "#151515" }}>
 
             {/* Main grid */}
-            <div className="max-w-8xl mx-auto pt-24 pb-16 px-6 md:px-12 lg:px-16">
+            <div className="max-w-[1400px] mx-auto pt-24 pb-16 px-6 md:px-12 lg:px-16">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 md:mb-20 mb-10">
 
                     {/* Col 1: Brand */}

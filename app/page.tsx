@@ -1,59 +1,46 @@
-import { NavBar2 } from "./components/Navbar";
-import Hero from "./components/Hero";
-import Philosophy from "./components/Philosophy";
-import TechStackSection from "./components/TechStackSection";
-import EcosystemSection from "./components/EcosystemSection";
-import InstitutionalPartner from "./components/InstitutionalPartner";
-import ProgramEcosystem from "./components/ProgramEcosystem";
+import Hero from "./components/Hero/Hero";
+import Philosophy from "./components/Philosophy/Philosophy";
+import Ecosystem from "./components/Ecosystem/Ecosystem";
 import PartnerWithUsSection from "./components/PartnerWithUsSection";
 import Footer from "./components/Footer";
+import OurUsp from "./components/OurUsp/OurUsp";
+import HowItWorks from "./components/HowItWorks/HowItWorks";
+import UpcomingPrograms from "./components/UpcomingPrograms";
+import AIStack from "./components/AIStack/AIStack";
+import WhyChoose from "./components/WhyChoose/WhyChoose";
+import Testimonials from "./components/Testimonials/Testimonials";
+import InstitutionalPartners from "./components/InstitutionalPartners/InstitutionalPartners";
+import FAQSection from "./components/FAQ/FAQSection";
+import CounsellorCTA from "./components/CounsellorCTA";
+import { Navbar } from "./components/Navbar";
+import GoUpButton from "./components/GoUpButton";
 
 export default function Home() {
   return (
     <main className="font-dmsans">
-      <NavBar2
-        domain={{
-          name: "MeritRise.ai",
-        }}
-        navigationMenu={[
-          {
-            title: "Our Philosophy",
-            url: "#philosophy",
-          },
-          {
-            title: "AI Architecture",
-            url: "#ai",
-          },
-          {
-            title: "Beyond Screens",
-            url: "#beyond-screens",
-          },
-          {
-            title: "Institutional Partners",
-            url: "#partners",
-          },
-          {
-            title: "Upcoming Programs",
-            url: "#programs",
-          },
-        ]}
-        authLinks={{
-          register: {
-            text: "Join Waitlist",
-            variant: "default",
-            isVisible: true,
-          },
-        }}
-      />
-
+      <Navbar />
       <Hero />
-      <Philosophy />
-      <TechStackSection />
-      <EcosystemSection />
-      <InstitutionalPartner />
-      <ProgramEcosystem />
-      <PartnerWithUsSection />
+      <div className="bg-white">
+        <Philosophy />
+        <Ecosystem />
+      </div>
+      <OurUsp />
+      <HowItWorks />
+      <div className="bg-white">
+        <UpcomingPrograms />
+        <AIStack />
+      </div>
+      <WhyChoose />
+      <Testimonials />
+      <div className="bg-white">
+        <InstitutionalPartners />
+
+        <PartnerWithUsSection />
+        <FAQSection />
+        <CounsellorCTA />
+      </div>
       <Footer />
+      <GoUpButton />
     </main>
   );
 }

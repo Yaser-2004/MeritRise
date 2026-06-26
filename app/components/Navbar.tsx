@@ -1,556 +1,230 @@
 "use client";
 
 import * as React from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import logoBlack from "../assets/logoBlack.webp"
-
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet";
-
-import {
-    LayoutDashboard,
-    ShoppingCart,
-    Users,
-    MenuIcon,
-    BookOpen,
-    MessageCircle,
-    Info,
-    Phone,
-    Compass,
-} from "lucide-react";
-
-import { Button, buttonVariants } from "@/components/ui/button";
-import { MdElectricBolt } from "react-icons/md";
-
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
-import { VariantProps } from "class-variance-authority";
 import Image from "next/image";
-import { useState } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
+
+import logoWhite from "../assets/logoWhite.png";
 import WaitlistModal from "./WaitlistModal";
+import SlideButton from "./SlideButton";
 
-type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
-type IconElement = React.ReactElement<{ size: number; className?: string }>;
-
-type BaseButtonProps = {
-    text?: string;
-    className?: string;
-    variant?: ButtonVariant;
-    isVisible?: boolean;
-};
-
-type ButtonClickProps = BaseButtonProps & {
-    onClick?: () => void;
-    urlLink?: never;
-};
-
-type ButtonUrlProps = BaseButtonProps & {
-    onClick?: never;
-    urlLink?: string;
-};
-
-type ButtonProps = ButtonClickProps | ButtonUrlProps;
-
-interface NavBar2Props<T extends MenuItem> {
-    domain?: {
-        name?: string | React.ReactNode;
-        logo?: React.ReactNode;
-    };
-    navigationMenu?: T[];
-    isSticky?: boolean;
-    authLinks?: {
-        login?: ButtonProps;
-        register?: ButtonProps;
-    };
-    leftAddon?: React.ReactNode;
-    className?: string;
-}
-
-export interface MenuItem {
+// ---------------------------------------------------------------------------
+// Nav data — this is the ONE place you edit to add/remove/rename links.
+// `subItems` is optional: leave it off for a plain link, add it for a
+// dropdown (desktop: hover/click panel, mobile: expandable row).
+// ---------------------------------------------------------------------------
+export interface NavSubItem {
     title: string;
     url: string;
-    className?: string;
-    subMenu?: SubMenu[];
+    description?: string;
 }
 
-export interface SubMenu {
+export interface NavItem {
     title: string;
-    description?: string;
     url?: string;
-    icon?: React.ReactNode;
-    className?: string;
+    subItems?: NavSubItem[];
 }
 
-interface ListItemProps extends React.ComponentPropsWithoutRef<"li"> {
-    customClassName?: string;
-    href: string;
-    title: string;
-    description?: string;
-    icon?: React.ReactNode;
-    children?: React.ReactNode;
-}
-
-const mainMenu: MenuItem[] = [
-    {
-        title: "Products",
-        url: "/products",
-        subMenu: [
-            {
-                title: "All Products",
-                url: "/products/all",
-                description: "Browse our complete catalog.",
-                icon: <ShoppingCart />,
-            },
-            {
-                title: "New Arrivals",
-                url: "/products/new",
-                description: "Discover the latest additions.",
-                icon: <Compass />,
-            },
-            {
-                title: "Categories",
-                url: "/products/categories",
-                description: "Explore by product type.",
-                icon: <LayoutDashboard />,
-            },
-        ],
-    },
-    {
-        title: "About Us",
-        url: "/about",
-        subMenu: [
-            {
-                title: "Our Story",
-                url: "/about/story",
-                description: "Learn about our mission and values.",
-                icon: <BookOpen />,
-            },
-            {
-                title: "Team",
-                url: "/about/team",
-                description: "Meet the people behind our success.",
-                icon: <Users />,
-            },
-        ],
-    },
-    {
-        title: "Support",
-        url: "/support",
-        subMenu: [
-            {
-                title: "Help Center",
-                url: "/support/help",
-                description: "Find answers to common questions.",
-                icon: <MessageCircle />,
-            },
-            {
-                title: "Contact Us",
-                url: "/support/contact",
-                description: "Get in touch with our support team.",
-                icon: <Phone />,
-            },
-            {
-                title: "FAQs",
-                url: "/support/faq",
-                description: "Frequently Asked Questions.",
-                icon: <Info />,
-            },
-        ],
-    },
+const NAV_ITEMS: NavItem[] = [
+    { title: "Our Ecosystem", url: "#our-ecosystem" },
+    { title: "How It Works", url: "#how-it-works" },
+    { title: "Upcoming Programs", url: "#upcoming-programs" },
+    { title: "AI Architecture", url: "#ai-architecture" },
 ];
 
-export function NavBar2<T extends MenuItem>(navBar2Props: NavBar2Props<T>) {
-    const [openType, setOpenType] = useState<"student" | "institution" | null>(null);
-    const [isScrolled, setIsScrolled] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const {
-        domain = { name: "Bolt Stack" },
-        isSticky = true,
-        authLinks,
-        leftAddon,
-        className = "",
-        navigationMenu,
-        ...props
-    } = navBar2Props;
+interface NavbarProps {
+    items?: NavItem[];
+    ctaText?: string;
+}
 
-    const defaultLogo = domain.logo || <MdElectricBolt size={26} />;
-    const defaultNavigationMenu = navigationMenu ?? mainMenu;
+export function Navbar({ items = NAV_ITEMS, ctaText = "Join Waitlist" }: NavbarProps) {
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [openDesktopMenu, setOpenDesktopMenu] = useState<string | null>(null);
+    const [showWaitlist, setShowWaitlist] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
 
-    React.useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setIsScrolled(true);
-            } else {
-                setIsScrolled(false);
-            }
-        };
-
-        window.addEventListener("scroll", handleScroll);
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 20);
+        onScroll();
+        window.addEventListener("scroll", onScroll);
+        return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
-    const { login = {} } = authLinks || {};
-    const { register = {} } = authLinks || {};
-    const {
-        className: loginClassName = "",
-        isVisible: isLoginVisbile = true,
-        onClick: onLoginClicked,
-        text: loginText = "Login",
-        urlLink: urlLoginUrl = "",
-        variant: loginVariant = "ghost",
-    } = login;
-
-    const {
-        className: registerClassName = "hover:bg-black hover:text-white rounded-lg bg-transparent border border-black/50 text-black text-base transition-all duration-300 ease-in-out px-6 h-12",
-        isVisible: isRegisterVisible = true,
-        onClick: onRegisterClicked,
-        text: registerText = "Register",
-        urlLink: urlRegisterUrl = "",
-        variant: registerVariant = "default",
-    } = register;
-
-    const navBarSticklyTailwindCss = `
-        sticky border-b top-0 mb-12 py-5 flex justify-between items-center transition-all duration-300 w-full bg-background/90 backdrop-blur-md
-        ${isScrolled
-            ? "py-2 shadow-sm"
-            : "py-3"
-        }`;
-
-    const RenderMainMenuItem = ({ menuItem }: { menuItem: MenuItem }) => {
-        if (menuItem.subMenu && menuItem.subMenu.length > 0) {
-            return (
-                <NavigationMenuItem>
-                    <NavigationMenuTrigger
-                        className={`bg-transparent ${menuItem.className || ""}`}
-                    >
-                        {menuItem.title}
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                        <ul className="w-[300px]">
-                            {menuItem.subMenu.map((subMenuItem) => (
-                                <ListItem
-                                    key={subMenuItem.title}
-                                    title={subMenuItem.title}
-                                    description={subMenuItem.description}
-                                    icon={subMenuItem.icon}
-                                    href={subMenuItem.url || ""}
-                                    customClassName={subMenuItem.className}
-                                />
-                            ))}
-                        </ul>
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
-            );
-        }
-
-        return (
-            <NavigationMenuLink asChild>
-                <Link href={menuItem.url} className={menuItem.className || "text-black rounded-full"}>
-                    {menuItem.title}
-                </Link>
-            </NavigationMenuLink>
-        );
-    };
-
-    const RenderNameAndLogo = ({
-        defaultLogo,
-    }: {
-        defaultLogo: React.ReactNode;
-    }) => {
-        return (
-            <Link href={"/"}>
-                <div className="pb-1 flex justify-start md:justify-center md:items-center gap-2 md:mb-[2px]">
-                    <Image src={logoBlack} alt="Logo" className="md:h-[40px] h-[25px] object-contain w-fit" style={{ color: "black" }} />
-                </div>
-            </Link>
-        );
-    };
+    // Close the mobile panel automatically if the viewport grows back to desktop.
+    useEffect(() => {
+        const onResize = () => {
+            if (window.innerWidth >= 768) setMobileOpen(false);
+        };
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
 
     return (
-        <nav
-            {...props}
-            className={`z-50 ${isSticky
-                ? navBarSticklyTailwindCss
-                : "relative flex justify-between items-center p-6 px-20"
-                } ${className}`}
+        <header
+            className={`sticky top-0 z-50 w-full border-b border-white/5 bg-[#151515]/95 backdrop-blur transition-shadow duration-300 ${scrolled ? "shadow-lg shadow-black/20" : ""
+                }`}
         >
-            <div className="flex justify-between px-4 md:px-[80px] items-center w-full">
-                <RenderNameAndLogo defaultLogo={defaultLogo} />
-                <NavigationMenu viewport={false} className="max-lg:hidden mt-2 ">
-                    <NavigationMenuList>
-                        {defaultNavigationMenu.map((mainMenuItem) => (
-                            <RenderMainMenuItem
-                                key={mainMenuItem.title}
-                                menuItem={mainMenuItem}
-                            />
-                        ))}
-                    </NavigationMenuList>
-                </NavigationMenu>
+            <nav className="relative flex items-center justify-between px-6 py-4 md:px-10">
+                {/* Logo — left */}
+                <Link href="/" className="flex shrink-0 items-center">
+                    <Image src={logoWhite} alt="Logo" priority className="h-6 w-auto md:h-7" />
+                </Link>
 
-                <div>
-                    <RenderMobileMenu defaultLogo={defaultLogo} />
-                    <div className="flex gap-2 items-center">
-                        {leftAddon && (
-                            <div className="max-lg:hidden flex items-center gap-2">
-                                {leftAddon}
-                            </div>
-                        )}
-                        <RenderAuthButton
-                            className={registerClassName}
-                            isVisible={isRegisterVisible}
-                            onClick={() => setOpenType("student")}
-                            text={registerText}
-                            urlLink={urlRegisterUrl}
-                            variant={registerVariant}
-                        />
+                {/* Nav links — true center, desktop only */}
+                <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 lg:gap-7 lg:flex">
+                    {items.map((item) => (
+                        <li
+                            key={item.title}
+                            className="relative"
+                            onMouseEnter={() => item.subItems && setOpenDesktopMenu(item.title)}
+                            onMouseLeave={() => item.subItems && setOpenDesktopMenu(null)}
+                        >
+                            <Link
+                                href={item.url ?? "#"}
+                                onClick={(e) => {
+                                    if (item.subItems) {
+                                        e.preventDefault();
+                                        setOpenDesktopMenu((cur) => (cur === item.title ? null : item.title));
+                                    }
+                                }}
+                                className="group relative flex items-center gap-1 px-4 md:px-4 lg:px-0 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+                            >
+                                {item.title}
+                                {item.subItems && (
+                                    <ChevronDown
+                                        className={`h-3.5 w-3.5 transition-transform duration-200 ${openDesktopMenu === item.title ? "rotate-180" : ""
+                                            }`}
+                                    />
+                                )}
+                                <span className="w-full pointer-events-none absolute -bottom-0.5 h-px origin-left scale-x-0 bg-[#0055FF] transition-transform duration-300 group-hover:scale-x-100" />
+                            </Link>
+
+                            {item.subItems && (
+                                <div
+                                    className={`absolute left-1/2 top-full grid -translate-x-1/2 overflow-hidden pt-2 transition-[grid-template-rows,opacity] duration-200 ease-out ${openDesktopMenu === item.title
+                                        ? "grid-rows-[1fr] opacity-100"
+                                        : "grid-rows-[0fr] opacity-0"
+                                        }`}
+                                >
+                                    <div className="min-w-[260px] overflow-hidden rounded-2xl bg-[#1d1d1d] p-2 shadow-2xl ring-1 ring-white/10">
+                                        {item.subItems.map((sub) => (
+                                            <Link
+                                                key={sub.title}
+                                                href={sub.url}
+                                                onClick={() => setOpenDesktopMenu(null)}
+                                                className="block rounded-xl px-3 py-2.5 text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white"
+                                            >
+                                                <div className="font-medium">{sub.title}</div>
+                                                {sub.description && (
+                                                    <div className="mt-0.5 text-xs text-white/40">{sub.description}</div>
+                                                )}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+
+                {/* Right side — CTA on desktop, hamburger on mobile */}
+                <div className="flex items-center gap-3">
+                    <SlideButton
+                        text={ctaText}
+                        onComplete={() => {
+                            setMobileOpen(false);
+                            setShowWaitlist(true);
+                        }}
+                    />
+
+                    <button
+                        onClick={() => setMobileOpen((o) => !o)}
+                        aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                        aria-expanded={mobileOpen}
+                        className="hover:cursor-pointer flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 lg:hidden"
+                    >
+                        {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                    </button>
+                </div>
+            </nav>
+
+            {/* Mobile dropdown panel — pure CSS height animation, no JS measuring */}
+            <div
+                className={`grid transition-[grid-template-rows] duration-300 ease-in-out md:hidden ${mobileOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    }`}
+            >
+                <div className="overflow-hidden">
+                    <div className="flex flex-col gap-0 border-t border-white/10 px-6 py-2">
+                        {items.map((item) => (
+                            <MobileNavItem key={item.title} item={item} onNavigate={() => setMobileOpen(false)} />
+                        ))}
+                        <button
+                            onClick={() => {
+                                setMobileOpen(false);
+                                setShowWaitlist(true);
+                            }}
+                            className="mt-4 mb-4 flex h-11 w-full items-center justify-center rounded-full border border-white text-sm font-medium text-white transition-colors hover:bg-white hover:text-black"
+                        >
+                            {ctaText}
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {openType && <WaitlistModal
-                isOpen={true}
-                userType={openType}
-                onClose={() => setOpenType(null)}
-            />}
-        </nav>
+            {showWaitlist && (
+                <WaitlistModal isOpen={showWaitlist} onClose={() => setShowWaitlist(false)} />
+            )}
+
+            <div className="h-px bg-gradient-to-r from-[#151515] via-[#0055FF] to-[#151515]"></div>
+        </header>
     );
+}
 
-    function RenderMobileMenu({ defaultLogo }: { defaultLogo: React.ReactNode }) {
+function MobileNavItem({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
+    const [open, setOpen] = useState(false);
+
+    if (!item.subItems) {
         return (
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                <SheetTrigger asChild>
-                    <Button variant={"outline"} size="icon" className="hidden max-lg:flex relative z-[100] cursor-pointer touch-manipulation">
-                        <MenuIcon className="h-5 w-5" />
-                    </Button>
-                </SheetTrigger>
-                <SheetContent className="">
-                    <SheetHeader>
-                        <SheetTitle className="flex items-center justify-start gap-2">
-                            <Image
-                                src={logoBlack}
-                                alt="Logo"
-                                className="h-6 w-auto"
-                            />
-                        </SheetTitle>
-                    </SheetHeader>
-
-                    <div className="mt-20 mx-10">
-                        {/*
-                            The base <Accordion> component (components/ui/accordion.tsx) hardcodes
-                            "rounded-2xl overflow-hidden" — that's what made the whole menu look like
-                            a floating card with rounded corners in the screenshot.
-
-                            We override BOTH of those here, directly at the usage site:
-                              - rounded-none  → kills the 2xl rounding
-                              - !overflow-visible → kills the clipping (the ! forces it past the
-                                base component's own class, since Tailwind's `cn()` merge order
-                                otherwise lets the component's own "overflow-hidden" win)
-                        */}
-                        <Accordion
-                            type="single"
-                            collapsible
-                            className="w-full rounded-none !overflow-visible"
-                        >
-                            {defaultNavigationMenu.map((mainMenuItem) => {
-                                if (mainMenuItem.subMenu && mainMenuItem.subMenu.length > 0) {
-                                    return (
-                                        <AccordionItem
-                                            key={mainMenuItem.title}
-                                            value={mainMenuItem.title}
-                                            /*
-                                                Base AccordionItem ships with:
-                                                  "not-last:border-b data-open:bg-muted/50"
-                                                The border-b IS there, but with no explicit color it
-                                                inherits from the theme's --border CSS variable, which
-                                                can be very faint/invisible depending on your theme.
-                                                We make it explicit and visible here, AND we remove the
-                                                "open state" background tint since we want a flat list.
-                                            */
-                                            className="border-b border-gray-200 data-open:bg-transparent"
-                                        >
-                                            <AccordionTrigger className="text-left text-lg font-medium px-0 py-6 w-full hover:no-underline">
-                                                {mainMenuItem.title}
-                                            </AccordionTrigger>
-                                            <AccordionContent className="pb-4 px-0">
-                                                <div className="space-y-2">
-                                                    {mainMenuItem.subMenu.map((subMenuItem) => (
-                                                        <Link
-                                                            key={subMenuItem.title}
-                                                            href={subMenuItem.url || ""}
-                                                            onClick={() => setMobileMenuOpen(false)}
-                                                            className="p-2 flex items-center gap-4 rounded-md hover:bg-accent text-base"
-                                                        >
-                                                            <div className="text-sm">
-                                                                {React.isValidElement(subMenuItem.icon)
-                                                                    ? React.cloneElement(
-                                                                        subMenuItem.icon as IconElement,
-                                                                        {
-                                                                            size: 17,
-                                                                            className: "text-muted-foreground",
-                                                                        },
-                                                                    )
-                                                                    : subMenuItem.icon}
-                                                            </div>
-                                                            <div>
-                                                                <div className="font-medium">
-                                                                    {subMenuItem.title}
-                                                                </div>
-                                                                {subMenuItem.description && (
-                                                                    <div className="text-muted-foreground text-xs mt-1">
-                                                                        {subMenuItem.description}
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </Link>
-                                                    ))}
-                                                </div>
-                                            </AccordionContent>
-                                        </AccordionItem>
-                                    );
-                                }
-
-                                // Simple menu items without submenu also get the same bottom border
-                                // so the whole list looks visually consistent, divider after divider.
-                                return (
-                                    <div key={mainMenuItem.title} className="w-full border-b border-gray-200">
-                                        <Link
-                                            href={mainMenuItem.url}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                            className="block py-4 w-full text-lg font-medium hover:text-accent-foreground"
-                                        >
-                                            {mainMenuItem.title}
-                                        </Link>
-                                    </div>
-                                );
-                            })}
-                        </Accordion>
-
-                        <div className="mt-20 w-full">
-                            <RenderAuthButton
-                                className={`${registerClassName} w-full`}
-                                isVisible={isRegisterVisible}
-                                onClick={() => {
-                                    setMobileMenuOpen(false);
-                                    setOpenType("student");
-                                }}
-                                text={registerText}
-                                urlLink={urlRegisterUrl}
-                                variant={registerVariant}
-                                isInSheet={true}
-                            />
-                        </div>
-                    </div>
-                </SheetContent>
-            </Sheet>
+            <Link
+                href={item.url ?? "#"}
+                onClick={onNavigate}
+                className="border-b border-white/10 py-3 text-base font-medium text-white/80 last:border-b-0"
+            >
+                {item.title}
+            </Link>
         );
     }
-}
 
-type RequiredButtonsProps = Required<Omit<ButtonProps, "onClick">> & {
-    onClick?: () => void;
-    isInSheet?: boolean;
-};
-
-function RenderAuthButton({
-    className,
-    isVisible,
-    onClick,
-    text,
-    urlLink,
-    variant,
-    isInSheet = false,
-}: RequiredButtonsProps) {
     return (
-        <>
-            {isVisible ? (
-                <div
-                    className={`flex items-center space-x-4 ${isInSheet ? "hidden max-lg:flex w-full max-lg:gap-3 max-lg:flex-col" : " block max-lg:hidden"}`}
-                >
-                    {onClick ? (
-                        <>
-                            <Button
-                                onClick={onClick}
-                                className={`h-10 ${isInSheet && "w-full"} cursor-pointer select-none ${className}`}
-                                variant={variant}
+        <div className="border-b border-white/10 last:border-b-0">
+            <button
+                onClick={() => setOpen((o) => !o)}
+                className="flex w-full items-center justify-between py-3 text-left text-base font-medium text-white/80"
+            >
+                {item.title}
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+            </button>
+            <div
+                className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    }`}
+            >
+                <div className="overflow-hidden">
+                    <div className="flex flex-col gap-1 pb-3 pl-3">
+                        {item.subItems.map((sub) => (
+                            <Link
+                                key={sub.title}
+                                href={sub.url}
+                                onClick={onNavigate}
+                                className="py-2 text-sm text-white/60"
                             >
-                                <span>{text}</span>
-                            </Button>
-                        </>
-                    ) : (
-                        <Button
-                            className={`h-10 ${isInSheet && "w-full mt-5"} cursor-pointer select-none ${className}`}
-                            variant={variant}
-                            asChild
-                        >
-                            <a className="no-underline" href={urlLink}>
-                                {text}
-                            </a>
-                        </Button>
-                    )}
-                </div>
-            ) : (
-                <div className="max-lg:hidden"></div>
-            )}
-        </>
-    );
-}
-
-function ListItem({
-    title,
-    description,
-    icon,
-    children,
-    href,
-    ...props
-}: ListItemProps) {
-    return (
-        <li {...props}>
-            <NavigationMenuLink asChild>
-                <Link
-                    href={href}
-                    className="block   select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none 
-          transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                >
-                    <div className="flex items-start gap-3">
-                        <span className="flex-shrink-0">{icon && <>{icon}</>}</span>
-                        <div>
-                            <h3 className="leading-none font-medium text-[15px]">{title}</h3>
-                            {description && (
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    {description}
-                                </p>
-                            )}
-                        </div>
+                                {sub.title}
+                            </Link>
+                        ))}
                     </div>
-
-                    {children && (
-                        <p className="mt-2 text-muted-foreground line-clamp-2 text-sm leading-snug">
-                            {children}
-                        </p>
-                    )}
-                </Link>
-            </NavigationMenuLink>
-        </li>
+                </div>
+            </div>
+        </div>
     );
 }

@@ -1,23 +1,13 @@
-import { STIX_Two_Text, Instrument_Serif, Red_Hat_Text, Figtree } from "next/font/google";
+import { dmSans } from "./fonts";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const redHatText = Red_Hat_Text({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-export const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["italic", "normal"],
-});
-
-export const stixTwoText = STIX_Two_Text({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["italic", "normal"],
-});
+export const metadata = {
+  title: {
+    default: "MeritRise | Learn from the Best, Rise to your Best",
+    template: "MeritRise | %s",
+  },
+};
 
 export default function RootLayout({
   children,
@@ -26,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cn("font-sans")}>
-      <body className={`${redHatText.className}`}>
+      <body className={`${dmSans.className} bg-[#151515]`}>
         {children}
       </body>
     </html>
