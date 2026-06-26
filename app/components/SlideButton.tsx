@@ -126,6 +126,7 @@ export default function SlideButton({
                 onPointerDown={handlePointerDown}
                 style={{
                     transform: `translateX(${position}px)`,
+                    touchAction: "none",
                 }}
                 className={`absolute left-1 top-1 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md
                 ${dragging
