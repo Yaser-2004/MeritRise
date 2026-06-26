@@ -2,7 +2,8 @@
 
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import WaitListModal from "./WaitlistModal";
+import dynamic from "next/dynamic";
+const WaitListModal = dynamic(() => import("./WaitlistModal"));
 
 export function WaitListButton({ variant }: { variant: "default" | "blue" }) {
     const [showWaitlist, setShowWaitlist] = useState(false);

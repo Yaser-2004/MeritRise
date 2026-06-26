@@ -2,8 +2,9 @@
 
 import { ArrowRight } from "lucide-react";
 import { stixTwoText, alata } from "@/app/fonts";
-import WaitListModal from "./WaitlistModal";
 import { useState } from "react";
+import dynamic from "next/dynamic";
+const WaitListModal = dynamic(() => import("./WaitlistModal"));
 
 const programs = [
     {

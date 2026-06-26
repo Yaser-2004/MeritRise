@@ -8,7 +8,8 @@ import TestimonialCard from "./TestimonialCard";
 import { testimonials } from "./testimonialsData";
 import { alata } from "@/app/fonts";
 import ctaImage from "@/app/assets/studentCTAwoman.webp";
-import WaitListModal from "../WaitlistModal";
+import dynamic from "next/dynamic";
+const WaitListModal = dynamic(() => import("../WaitlistModal"));
 
 export default function Testimonials() {
     const [current, setCurrent] = useState(0);

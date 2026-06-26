@@ -7,8 +7,9 @@ import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
 
 import logoWhite from "../assets/logoWhite.png";
-import WaitlistModal from "./WaitlistModal";
 import SlideButton from "./SlideButton";
+import dynamic from "next/dynamic";
+const WaitListModal = dynamic(() => import("./WaitlistModal"));
 
 // ---------------------------------------------------------------------------
 // Nav data — this is the ONE place you edit to add/remove/rename links.
@@ -174,7 +175,7 @@ export function Navbar({ items = NAV_ITEMS, ctaText = "Join Waitlist" }: NavbarP
             </div>
 
             {showWaitlist && (
-                <WaitlistModal isOpen={showWaitlist} onClose={() => setShowWaitlist(false)} />
+                <WaitListModal isOpen={showWaitlist} onClose={() => setShowWaitlist(false)} />
             )}
 
             <div className="h-px bg-gradient-to-r from-[#151515] via-[#0055FF] to-[#151515]"></div>
