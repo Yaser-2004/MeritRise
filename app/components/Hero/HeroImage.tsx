@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
 import heroImage1 from "@/app/assets/mrhero1.webp";

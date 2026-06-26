@@ -1,10 +1,6 @@
-"use client";
-
 import Image, { StaticImageData } from "next/image";
-import { ArrowRight } from "lucide-react";
-import { useState } from "react";
 import { alata } from "@/app/fonts";
-import WaitListModal from "../WaitlistModal";
+import { WaitListButton } from "../WaitListButton";
 
 interface Props {
     title: string;
@@ -19,7 +15,6 @@ export default function WhyChooseCard({
     image,
     variant = "default",
 }: Props) {
-    const [showWaitlist, setShowWaitlist] = useState(false);
 
     return (
         <>
@@ -84,41 +79,11 @@ export default function WhyChooseCard({
                             {description}
                         </p>
 
-                        <button
-                            onClick={() => setShowWaitlist(true)}
-                            className={`
-                                mt-8 lg:mt-10
-                                w-fit
-                                h-14
-                                px-7
-                                rounded-full
-                                font-medium
-                                flex
-                                items-center
-                                gap-3
-                                transition-all
-                                duration-300
-                                hover:scale-[1.03]
-                                ${variant === "blue"
-                                    ? "bg-white text-[#0055FF]"
-                                    : "bg-[#0055FF] text-white"
-                                }
-                            `}
-                        >
-                            Join Waitlist
-
-                            <ArrowRight size={18} />
-                        </button>
-
+                        <WaitListButton variant={variant} />
                     </div>
 
                 </div>
             </div>
-
-            <WaitListModal
-                isOpen={showWaitlist}
-                onClose={() => setShowWaitlist(false)}
-            />
         </>
     );
 }

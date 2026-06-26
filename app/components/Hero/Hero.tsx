@@ -1,5 +1,3 @@
-"use client";
-
 import { HeroText, HeroButtons } from "./HeroContent";
 import HeroImage from "./HeroImage";
 import HeroStats from "./HeroStats";

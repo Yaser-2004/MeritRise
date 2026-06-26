@@ -1,9 +1,7 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
 import BenefitCard from "./BenefitCard";
 import { UserRound, Lock, Cog } from "lucide-react";
 import { alata, dmSans } from "@/app/fonts";
+import PartnerButton from "./PartnerButton";
 
 const BENEFITS = [
     {
@@ -81,21 +79,7 @@ export default function InstitutionalPartners() {
 
                 {/* CTA */}
                 <div className="flex justify-center mt-10">
-                    <Button
-                        className="
-                            h-16
-                            px-10
-                            rounded-full
-                            bg-[#0055FF]
-                            hover:bg-[#0047D9]
-                            text-white
-                            text-lg
-                            hover:cursor-pointer
-                        "
-                        onClick={() => document.getElementById("partner-with-us")?.scrollIntoView({ behavior: "smooth" })}
-                    >
-                        Partner With Us (Institutions)
-                    </Button>
+                    <PartnerButton />
                 </div>
 
                 {/* Cards */}
