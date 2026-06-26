@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, ReactNode } from "react";
-import { instrumentSerif } from "../../layout";
+import { instrumentSerif } from "@/app/fonts";
 import leaders from "../../assets/leadersw.webp";
 
 import type { StaticImageData } from "next/image";

@@ -1,4 +1,4 @@
-import { instrumentSerif } from "../../layout";
+import { instrumentSerif } from "@/app/fonts";
 
 export default function MissionSection() {
     return (
