@@ -26,7 +26,7 @@ export default function TalkToCounsellor() {
                                     hover:text-white
                                     hover:bg-[#0055FF]
                                     hover:cursor-pointer
-                                    z-50
+                                    z-10
                                 "
             onClick={() => window.open("tel:+919555870366", "_self")}
         >
