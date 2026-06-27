@@ -2,6 +2,8 @@
 
 import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
+import ThankyouModal from "./ThankyouModal";
+import axios from "axios";
 
 interface WaitListModalProps {
     isOpen: boolean;
@@ -20,6 +22,7 @@ export default function WaitListModal({
     onClose,
 }: WaitListModalProps) {
     const [loading, setLoading] = useState(false);
+    const [showThankyou, setShowThankyou] = useState(false);
 
     const [formData, setFormData] = useState({
         fullName: "",
@@ -115,22 +118,14 @@ export default function WaitListModal({
 
             console.log(formData);
 
-            await fetch("/api/waitlist", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
-
+            await axios.post("/api/join-waitlist", formData);
+            setShowThankyou(true);
             setFormData({
                 fullName: "",
                 email: "",
                 phone: "",
                 program: "",
             });
-
-            onClose();
         } catch (error) {
             console.error(error);
         } finally {
@@ -305,6 +300,15 @@ export default function WaitListModal({
                     </p>
                 </form>
             </div>
+
+            <ThankyouModal
+                isOpen={showThankyou}
+                userType="student"
+                onClose={() => {
+                    setShowThankyou(false);
+                    onClose();
+                }}
+            />
         </div>
         , document.body);
 }

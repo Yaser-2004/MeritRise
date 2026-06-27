@@ -10,7 +10,7 @@ interface ThankyouModalProps {
 export default function ThankyouModal({
     isOpen,
     onClose,
-    userType = "institution",
+    userType,
 }: ThankyouModalProps) {
     if (!isOpen) return null;
 
