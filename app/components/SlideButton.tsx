@@ -108,7 +108,7 @@ export default function SlideButton({
         >
             {/* Progress */}
             <div
-                className="absolute z-10 left-0 top-0 h-full rounded-full bg-[#0055FF] transition-none"
+                className="absolute z-10 left-0 top-0 h-full rounded-full bg-[#151515] transition-none"
                 style={{
                     width: `${progress}%`,
                 }}
