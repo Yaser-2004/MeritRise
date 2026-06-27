@@ -1,8 +1,14 @@
+import { preload } from "react-dom";
 import { HeroText, HeroButtons } from "./HeroContent";
 import HeroImage from "./HeroImage";
-import HeroStats from "./HeroStats";
+import dynamic from "next/dynamic";
+import heroImage1 from "@/app/assets/mrhero1.webp";
+
+const HeroStats = dynamic(() => import("./HeroStats"));
 
 export default function Hero() {
+    preload(heroImage1.src, { as: "image", fetchPriority: "high" });
+
     return (
         <section className="lg:min-h-[720px] relative">
             <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
@@ -37,19 +43,12 @@ export default function Hero() {
             </div>
 
             <div
-                className="
-                    absolute
-                    -left-60
-                    top-1/2
-                    bottom-0
-                    w-[400px]
-                    h-[400px]
-                    bg-[#0055FF]
-                    rounded-full
-                    blur-[300px]
-                    -z-10
-                    pointer-events-none
-                    "
+                aria-hidden
+                className="absolute -left-60 top-1/2 w-[500px] h-[500px] -z-10 pointer-events-none"
+                style={{
+                    background:
+                        "radial-gradient(circle, rgba(0, 85, 255, 0.35) 0%, rgba(0, 85, 255, 0.12) 40%, transparent 70%)",
+                }}
             />
         </section>
     );

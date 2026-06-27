@@ -1,19 +1,20 @@
 import Hero from "./components/Hero/Hero";
 import Philosophy from "./components/Philosophy/Philosophy";
 import Ecosystem from "./components/Ecosystem/Ecosystem";
-import PartnerWithUsSection from "./components/PartnerWithUsSection";
-import Footer from "./components/Footer";
 import OurUsp from "./components/OurUsp/OurUsp";
 import HowItWorks from "./components/HowItWorks/HowItWorks";
-import UpcomingPrograms from "./components/UpcomingPrograms";
 import AIStack from "./components/AIStack/AIStack";
 import WhyChoose from "./components/WhyChoose/WhyChoose";
-import Testimonials from "./components/Testimonials/Testimonials";
 import InstitutionalPartners from "./components/InstitutionalPartners/InstitutionalPartners";
 import FAQSection from "./components/FAQ/FAQSection";
-import CounsellorCTA from "./components/CounsellorCTA";
 import { Navbar } from "./components/Navbar";
 import dynamic from "next/dynamic";
+
+const UpcomingPrograms = dynamic(() => import("./components/UpcomingPrograms"));
+const Testimonials = dynamic(() => import("./components/Testimonials/Testimonials"));
+const PartnerWithUsSection = dynamic(() => import("./components/PartnerWithUsSection"));
+const CounsellorCTA = dynamic(() => import("./components/CounsellorCTA"));
+const Footer = dynamic(() => import("./components/Footer"));
 const GoUpButton = dynamic(() => import("./components/GoUpButton"));
 
 export default function Home() {

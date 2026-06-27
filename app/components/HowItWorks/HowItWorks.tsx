@@ -45,8 +45,9 @@ export default function HowItWorks() {
                                 src={studentImage}
                                 alt="Student"
                                 fill
+                                sizes="(min-width: 1024px) 50vw, 100vw"
+                                loading="lazy"
                                 className="object-cover object-left"
-                                //scale the image
                                 style={{
                                     filter: "brightness(1.05)",
                                 }}

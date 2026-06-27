@@ -64,7 +64,7 @@ export function Navbar({ items = NAV_ITEMS, ctaText = "Join Waitlist" }: NavbarP
 
     return (
         <header
-            className={`sticky top-0 z-50 w-full border-b border-white/5 bg-[#151515]/95 backdrop-blur transition-shadow duration-300 ${scrolled ? "shadow-lg shadow-black/20" : ""
+            className={`sticky top-0 z-50 w-full border-b border-white/5 bg-[#151515] transition-shadow duration-300 ${scrolled ? "shadow-lg shadow-black/20" : ""
                 }`}
         >
             <nav className="relative flex items-center justify-between px-6 py-4 md:px-10">
