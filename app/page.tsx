@@ -13,7 +13,8 @@ import InstitutionalPartners from "./components/InstitutionalPartners/Institutio
 import FAQSection from "./components/FAQ/FAQSection";
 import CounsellorCTA from "./components/CounsellorCTA";
 import { Navbar } from "./components/Navbar";
-import GoUpButton from "./components/GoUpButton";
+import dynamic from "next/dynamic";
+const GoUpButton = dynamic(() => import("./components/GoUpButton"));
 
 export default function Home() {
   return (
